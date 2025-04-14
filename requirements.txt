@@ -1,0 +1,15 @@
+langchain==0.3.8 
+langchain-community==0.3.8 
+langchain-core==0.3.46 
+langchain-experimental==0.3.3 
+langchain-openai==0.2.11 
+langgraph==0.2.56 
+streamlit 
+requests
+plotly 
+pandas 
+numpy
+streamlit-extras
+streamlit-chat
+pydantic
+databricks-langchain
