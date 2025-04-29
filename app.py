@@ -2,6 +2,7 @@ import streamlit as st
 import time
 from streamlit_extras.stylable_container import stylable_container
 from agent import create_workflow
+from data_fetch import LLM, RETRO_FEEDBACK
 graph = create_workflow()
 from data_fetch import run_get_tasks
 
@@ -34,18 +35,42 @@ if "chat_container_height" not in st.session_state:
 if "expander_expanded" not in st.session_state:
     st.session_state.expander_expanded = True
 
+# def stream_handler(chunk: str, place_holder) -> None:
+#     st.session_state.stream_buffer += chunk
+#     # Print each chunk as it comes in
+#     place_holder.write(st.session_state.stream_buffer)
+
+# def generate_retro_report():
+#     messages = [{"role": "user", "content": RETRO_FEEDBACK}]
+#     stream_res = LLM.stream(messages)
+#     st.session_state.stream_buffer = ""
+#     # with st.chat_message("assistant"):
+#     #place_holder = st.empty()
+#     try:
+#         for chunk in stream_res:
+#             st.session_state.stream_buffer += chunk.content
+#             #st.markdown(st.session_state.stream_buffer)
+#     except:
+#         pass
+
 # Function to handle question button clicks
 def ask_question(question):
     with st.session_state.history_container:
         # Add user message to chat history
+        with st.chat_message("user"):
+            st.markdown(f"**{question}**")
+
         st.session_state.messages.append({"role": "user", "content": question})
-        
-        # Use mock response
+
+        # if question != "Get the Retrospective Report":
         for chunk in graph.stream({"messages": st.session_state.messages}):
             print(chunk)
-        
+        # else:
+        #     generate_retro_report()
+            
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": st.session_state.stream_buffer})
+        # st.session_state.stream_buffer = ""
         
         # Hide cards
         st.session_state.show_cards = False
@@ -59,7 +84,7 @@ def ask_question(question):
 # Handle standup button click
 def toggle_standup():
     if st.session_state.standup_button_text == "Start Standup":
-        st.session_state.standup_button_text = "Summarise Standup updates"
+        st.session_state.standup_button_text = "Get Standup Report"
         # Show notification using Streamlit toast
         st.toast("Standup Notification Sent to Team", icon="✅")
         time.sleep(3)
@@ -71,16 +96,18 @@ def toggle_standup():
 # Handle retrospective button click
 def toggle_retro():
     if st.session_state.retro_button_text == "Start Retrospective":
-        st.session_state.retro_button_text = "Summarise Retrospective updates"
+        st.session_state.retro_button_text = "Get Retrospective Report"
         # Show notification using Streamlit toast
         st.toast("Retrospective Notification Sent to Team", icon="✅")
         time.sleep(3)
         st.rerun()
     else:
-        # Send a retrospective summary prompt
-        ask_question("Summarize the retrospective feedback")
+        get_retrospective_report()
+    
+def get_retrospective_report():
+    # Send a retrospective summary prompt
+    ask_question("Get the Retrospective Report")
 
-# Logo component
 def render_logo():
     st.markdown("# 🧑🏾‍💻 Vantage.ai")
 
@@ -117,7 +144,6 @@ def get_minimal_css():
     </style>
     """
 
-# Quick question buttons component - with expander
 def render_quick_questions():
     questions = [
         "Summarise the progress of the team",
@@ -135,44 +161,6 @@ def render_quick_questions():
             with cols[i]:
                 if st.button(question, key=f"q_{i}", use_container_width=True):
                     ask_question(question)
-
-# Sprint sidebar component - simplified
-# def render_sprint_sidebar():
-#     st.markdown("#### Current Sprint Summary")
-
-#     st.markdown("**Blocked**")
-#     blocked_stories = [
-#         "Payment integration",
-#         "Advanced search"
-#     ]
-#     for story in blocked_stories:
-#         st.error(story)
-
-#     st.markdown("**Overdue**")
-#     overdue_stories = [
-#         "Notification system",
-#         "Mobile responsiveness",
-#         "Performance optimizations"
-#     ]
-#     for story in overdue_stories:
-#         st.warning(story)
-
-#     st.markdown("**In Progress**")
-#     in_progress_stories = [
-#         "Data visualization component",
-#         "User settings page"
-#     ]
-#     for story in in_progress_stories:
-#         st.info(story)
-        
-#     st.markdown("**Completed**")
-#     completed_stories = [
-#         "User authentication flow",
-#         "Dashboard design implementation",
-#         "API integration with backend"
-#     ]
-#     for story in completed_stories:
-#         st.success(story)
 
 def render_sprint_sidebar():
     try:
@@ -218,7 +206,6 @@ def render_sprint_sidebar():
             for story in stories:
                 status_colors[category](story)
 
-# Main function
 def main():
     # Inject minimal CSS
     st.markdown(get_minimal_css(), unsafe_allow_html=True)
@@ -282,24 +269,19 @@ def main():
                     with st.chat_message(message["role"]):
                         st.markdown(message["content"])
             
-            # Chat input (keeping the existing input code)
-            prompt = st.chat_input("Summarise the team's progress...")
+            prompt = st.chat_input("ask about project status")
             if prompt:
-                # Add user message to chat history
                 st.session_state.messages.append({"role": "user", "content": prompt})
                 st.session_state.chat_container_height = 365
                 
-                # Hide cards on input
                 st.session_state.show_cards = False
                 
                 # Collapse expander when chat starts
                 st.session_state.expander_expanded = False
-                with history_container:
-                # Use mock response
+                with history_container:                
                     for chunk in graph.stream({"messages": st.session_state.messages}, subgraphs=False):
                         print(chunk)
                 
-                # Add assistant response to chat history
                 st.session_state.messages.append({"role": "assistant", "content": st.session_state.stream_buffer})
                 
                 # Force a rerun to update the UI
