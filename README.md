@@ -1,4 +1,4 @@
-
+![Logo](https://github.com/Ankan54/scrum_n_coke/blob/main/assets/vatnageailogo.JPG)
 # Vantage.ai : A Multi-Agent Project Management Tool
 Vantage.ai is an intelligent, multi-agent generative AI application that acts as a proactive Scrum Master for project teams. Through a natural, conversation-driven interface, Vantage.ai autonomously monitors project status, evaluates sprint health, identifies critical blockers, analyzes team member capacity, and generates automated standup summaries and retrospective insights. Each specialized agent collaborates in real time to provide teams with continuous, context-aware support, helping them stay aligned, anticipate issues early, and drive better outcomes — all without manual overhead.
 
