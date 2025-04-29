@@ -5,14 +5,12 @@ from langgraph.types import Command
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
 from langgraph.graph import StateGraph, START, END, MessagesState
-# from langchain_core.prompts import 
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-from data_fetch import run_get_tasks, LLM
+from data_fetch import run_get_tasks, LLM, RETRO_FEEDBACK
 import streamlit as st
 import streamlit.components.v1 as components
 from tools import *
 from prompts import *
-# from analyzer import data_picker_agent, report_generator_agent
 RETRY_LIMIT = 2
 
 
@@ -21,6 +19,8 @@ options = members + ["FINISH"]
 
 class State(MessagesState):
     invoke_history: Dict[str, int] = Field(default_factory=lambda: {m: 0 for m in members})
+    # with st.status("Thinking...", expanded=True) as thinking_status:
+    #     st_thinking = thinking_status
     st_thinking: st.expander = Field(default_factory=lambda: st.expander("Thinking...", expanded=True))
     next: str
 
@@ -56,6 +56,8 @@ Available Agents:
    - Charts, graphs, or diagrams are explicitly requested
    - Complex relationships would be clearer with visual representation
    - The user needs to or should see patterns or trends in data
+
+4. You are given the RetroSpective Feedback of the last two sprints. When user asks about retrospective report, you will directly call the writer agent to generate the report.  
 
 Your goal is to ensure efficient collaboration between agents without unnecessary steps while delivering complete solutions to user requests.
 
@@ -214,7 +216,8 @@ def visualizer(state: State) -> Command[Literal["__end__"]]:
         
 
 def writer_node(state: State) -> Command[Literal["supervisor"]]:
-    messages = [{"role": "system", "content": f"""You are an Expert Data, You are given all the information needed to answer the user's query in a coherent manner. Your task is to craft a response that is concise, clear, and easy to understand. Use tables and bullets points to structure and organize wherever the information can be expressed in a structured and elegant manner"""}] + state["messages"]
+    messages = [{"role": "system", "content": f"""You are an Expert Writer, You are given all the information needed to answer the user's query in a coherent manner. Your task is to craft a response that is concise, clear, and easy to understand. Use tables and bullets points to structure and organize wherever the information can be expressed in a structured and elegant manner. \
+                You are also given the retrospective feedback of the last two sprints. Use this information only when asked about creating Retrospective Report. RETROSPECTIVE_FEEDBACK: {RETRO_FEEDBACK}. Do not incude Retrospective information for any other question"""}] + state["messages"]
 
     st.session_state.stream_buffer = ""
 
@@ -228,7 +231,7 @@ def writer_node(state: State) -> Command[Literal["supervisor"]]:
     config["callbacks"] = [{"stream": stream_handler}]
     
     # Generate a response (streaming happens through the callback)
-    with st.chat_message("user"):
+    with st.chat_message("assistant"):
         place_holder = st.empty()
         try:
             for chunk in LLM.stream(messages):
