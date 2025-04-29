@@ -39,3 +39,4 @@ Vantage.ai consists of the following type of agents,
 
 All these specialized agents work collaboratively under the leadership of the Scrum Master Agent, helping teams manage projects more efficiently and effectively through intelligent, autonomous support.
 
+![Architecture]([https://github.com/Ankan54/scrum_n_coke/blob/main/assets/vatnageailogo.JPG](https://github.com/Ankan54/scrum_n_coke/blob/main/assets/vantageai.JPG))
