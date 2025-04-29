@@ -69,6 +69,6 @@ To run this project, you will need to add the following environment variables to
 
 - [@Ankan Bera](https://www.github.com/Ankan54)
 - [@Anand Vishnu](https://www.github.com/Nethereit)
-- [@Arushi Gupta](https://www.github.com/)
+- [@Arushi Gupta](https://www.github.com/arushigupta15)
 - [@Amey Patil](https://www.github.com/)
 
