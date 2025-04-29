@@ -3,17 +3,18 @@ import pandas as pd
 from langchain_core.messages import AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
-
-from databricks_langchain import ChatDatabricks
-import requests 
+from openai import OpenAI
+import requests, os
 import pandas as pd
 from typing import List, Dict, Any
+from dotenv import load_dotenv
+load_dotenv()
 
 def fetch_clickup_tasks(list_id):
     url = f"https://api.clickup.com/api/v2/list/{list_id}/task?subtasks=true&include_closed=true"
     headers = {
         "accept": "application/json",
-        "Authorization": "pk_176660818_YUYR1Z46L0B7WT8CU8MCCEC00B3W3I07"
+        "Authorization": os.getenv("CLICKUP_API_KEY")
     }
     response = requests.get(url, headers=headers)
     tasks = response.json()['tasks']
@@ -146,8 +147,78 @@ def run_get_tasks(list_id  = '901607242495'):
     df = preprocess(df)
     return df
 
-LLM = ChatDatabricks(
-    endpoint="databricks-claude-3-7-sonnet",
+token = os.getenv("GITHUB_TOKEN")
+endpoint = "https://models.github.ai/inference"
+model_name = "openai/gpt-4o"
+
+LLM = OpenAI(
+    base_url=endpoint,
+    api_key=token,
     temperature=0,
-    max_tokens=1500,
+    model=model_name
 )
+
+RETRO_FEEDBACK = """Sprint 1 Retrospective
+What Went Well
+
+"We successfully established the initial API architecture and implemented the foundational endpoints."
+"The UI design foundations and core components were completed as planned."
+"The experiment tracking setup was implemented without major hurdles."
+"We managed to develop the baseline forecasting model on schedule."
+"The initial MLOps pipeline foundations are in place and working."
+
+What Could Be Improved
+
+"Some team members had multiple critical path tasks assigned simultaneously, creating bottlenecks."
+"The data pipeline setup task became blocked and couldn't be completed this sprint."
+"Dependencies between stories weren't clearly identified during planning, which affected workflow."
+"Communication about blockers wasn't happening early enough in our daily standups."
+"We didn't allocate enough time for knowledge sharing about the MLOps infrastructure."
+"Acceptance criteria for some stories, especially around the API architecture, were somewhat vague."
+"We didn't properly account for the learning curve associated with some of the new technologies."
+"Documentation for completed components was minimal and inconsistent."
+
+Action Items
+
+Improve story breakdown to avoid assigning multiple critical path items to the same person
+Conduct a dependency mapping session before sprint planning
+Implement a "blocker identification" segment in daily standups
+Schedule regular knowledge sharing sessions for complex technical components
+Create templates for component documentation
+Develop clearer acceptance criteria templates
+Reserve buffer time for tasks involving new technologies
+
+Sprint 2 Retrospective
+What Went Well
+
+"The data visualization components were completed successfully and received positive feedback."
+"We implemented model predictions with confidence intervals ahead of schedule."
+"Extending the API layer is progressing well despite its complexity."
+"The experiment tracking capabilities have been expanded effectively."
+"Cross-team collaboration improved, especially between the UI and API developers."
+
+What Could Be Improved
+
+"We still have three blocked stories at the end of this sprint, including two carried over from Sprint 1."
+"The model deployment pipeline is blocked due to infrastructure dependencies."
+"Advanced model development couldn't proceed due to dependencies on the data pipeline."
+"The forecasting parameter customization task took longer than estimated due to unclear requirements."
+"Documentation continues to be inconsistent across components."
+"Communication about dependencies and blockers is still happening too late to resolve effectively."
+"We didn't properly account for the complexity of the model deployment pipeline."
+"Testing frameworks are still pending, which may create quality issues later."
+"Knowledge silos persist, particularly around MLOps infrastructure and advanced modeling techniques."
+
+Action Items
+
+Conduct an urgent unblocking session focused specifically on the data pipeline setup
+Create a visual dependency map for all remaining stories
+Implement a "blocker early warning system" where potential blockers are flagged in advance
+Prioritize the initial testing framework in Sprint 3
+Schedule dedicated documentation days at the end of each week
+Rotate team members across different components to reduce knowledge silos
+Break down complex tasks like model deployment into smaller, more manageable stories
+Implement pair programming for complex tasks to improve knowledge sharing
+
+Above given the retrospective feedback for the previous two sprints. Your task is to create a summary of theffedback for sprint 2 and analyse the feedback of both sprint 1 and 2 to identify the recurring issues in the project and how to rectify the same.
+"""
