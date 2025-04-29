@@ -62,7 +62,7 @@ To run this project, you will need to add the following environment variables to
 
 ## App Demo
 
-[![Watch the demo](https://github.com/Ankan54/scrum_n_coke/blob/main/assets/vantageaiscreen.JPG)](https://www.youtube.com/watch?v=VIDEO_ID)
+[![Watch the demo](https://github.com/Ankan54/scrum_n_coke/blob/main/assets/vantageaiscreen.JPG)](https://drive.google.com/file/d/1MWTzZaVP7_ApNZOL-85wIQNLSYfwU3Gr/view?usp=drivesdk)
 
 
 ## Authors
