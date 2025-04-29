@@ -40,3 +40,35 @@ Vantage.ai consists of the following type of agents,
 All these specialized agents work collaboratively under the leadership of the Scrum Master Agent, helping teams manage projects more efficiently and effectively through intelligent, autonomous support.
 
 ![Architecture](https://github.com/Ankan54/scrum_n_coke/blob/main/assets/vantageai.JPG)
+
+---
+
+## Project Setup
+
+The project can be run easily using docker containers. the dockerfile have been provided with the codebase. you can build the docker image and run the app using the below commands
+
+```bash
+  docker build -t <image_name>:<tag_name> .
+  docker run -p 8080:8080 <image_name>:<tag_name>
+```
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`CLICKUP_API_KEY` This is the platform we are using as project board for the app demo
+
+`GITHUB_TOKEN` Github PAT to use the models from github marketplace
+
+## App Demo
+
+[![Watch the demo](https://github.com/Ankan54/scrum_n_coke/blob/main/assets/vantageaiscreen.JPG)](https://www.youtube.com/watch?v=VIDEO_ID)
+
+
+## Authors
+
+- [@Ankan Bera](https://www.github.com/Ankan54)
+- [@Anand Vishnu](https://www.github.com/Nethereit)
+- [@Arushi Gupta](https://www.github.com/)
+- [@Amey Patil](https://www.github.com/)
+
