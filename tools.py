@@ -2,8 +2,10 @@ from langchain_core.tools import tool
 # from analyzer import data_picker_agent, report_generator_agent
 # from data_fetch import get_task_comments
 import requests
-import math
+import math, os
 from typing import Optional, Union
+from dotenv import load_dotenv
+load_dotenv()
 
 
 @tool
@@ -22,7 +24,7 @@ def update_task_status(task_id: str, new_status: str) -> dict:
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "Authorization": "pk_176660818_YUYR1Z46L0B7WT8CU8MCCEC00B3W3I07"
+        "Authorization": os.getenv("CLICKUP_API_KEY")
     }
     
     response = requests.put(url, json=payload, headers=headers)
@@ -46,7 +48,7 @@ def get_task_comments(task_id: str, fetch_comments: bool = False) -> list:
     url = f"https://api.clickup.com/api/v2/task/{task_id}/comment"
     headers = {
         "accept": "application/json",
-        "Authorization": "pk_176660818_YUYR1Z46L0B7WT8CU8MCCEC00B3W3I07"
+        "Authorization": os.getenv("CLICKUP_API_KEY")
     }
     
     response = requests.get(url, headers=headers)
@@ -65,7 +67,7 @@ def get_list_members() -> dict:
     url = "https://api.clickup.com/api/v2/list/901607182023/member"
     headers = {
         "accept": "application/json",
-        "Authorization": "pk_176660818_YUYR1Z46L0B7WT8CU8MCCEC00B3W3I07"
+        "Authorization": os.getenv("CLICKUP_API_KEY")
     }
     
     response = requests.get(url, headers=headers)
@@ -94,7 +96,7 @@ def add_comment(task_id: str, new_comment: str) -> dict:
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "Authorization": "pk_176660818_YUYR1Z46L0B7WT8CU8MCCEC00B3W3I07"
+        "Authorization": os.getenv("CLICKUP_API_KEY")
     }
     
     response = requests.post(url, json=payload, headers=headers)
